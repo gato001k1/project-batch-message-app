@@ -1,5 +1,12 @@
 @echo off
-title TSTCHTBAT
+title test CHBAT v1.0
+::WIP
+echo %random% > numdif
+if EXIST numdif ( 
+goto inic
+) else (
+goto number )
+:inic
 echo Ingrese la dirección IP o el nombre de host del servidor SFTP:
 set /p sftpServer=
 
@@ -26,4 +33,7 @@ curl -u %sftpUsername%:%sftpPassword% sftp://%sftpServer% -Q "put message1.txt p
 curl -u %sftpUsername%:%sftpPassword% sftp://%sftpServer% -Q "put crlm1.rl path/to/remote/file/test1"
 
 goto loop
-
+::WIP
+:number
+echo write a random number to differentiate the 2 computers
+set /p imput=
