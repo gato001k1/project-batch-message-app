@@ -1,11 +1,12 @@
 @echo off
 title test CHBAT v1.0
 ::WIP
-echo %random% > numdif
 if EXIST numdif ( 
+for /f "tokens=*" %%a in (numdif.lf) do set numdifnum=%%a
 goto inic
 ) else (
-goto number )
+echo %random%%random%%random%%random% > numdif.lf )
+
 :inic
 echo Ingrese la dirección IP o el nombre de host del servidor SFTP:
 set /p sftpServer=
@@ -29,11 +30,7 @@ echo %message% >> message1.txt
 ::this is to diplay the incoming messages
 type message.txt
 
-curl -u %sftpUsername%:%sftpPassword% sftp://%sftpServer% -Q "put message1.txt path/to/remote/file/test1"
-curl -u %sftpUsername%:%sftpPassword% sftp://%sftpServer% -Q "put crlm1.rl path/to/remote/file/test1"
+curl -u %sftpUsername%:%sftpPassword% sftp://%sftpServer% -Q "put message%numdifnum%.txt path/to/remote/file/test1"
+curl -u %sftpUsername%:%sftpPassword% sftp://%sftpServer% -Q "put crlm%numdifnum%.rl path/to/remote/file/test1"
 
 goto loop
-::WIP
-:number
-echo write a random number to differentiate the 2 computers
-set /p imput=
