@@ -6,3 +6,4 @@ only works on a windows 10 pc for the curl command
 # this is a WIP project and it nedds work
 if it doesent work use the curl website https://curl.se/ and download the .zip file and instert the 
 chatreciever.bat and reciver.bat inside of the bin directory.
+if you want linux support download the whole file and on the bin directory execute chatreciver.bat with wine cmd.
