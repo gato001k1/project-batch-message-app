@@ -49,7 +49,7 @@ if "%optusr%"=="create" (
      cd ..
     echo %optusr%>reciverin.l
     cd ..
-    start reciverftp.bat
+    start reciveftp.bat
     cd users
     cd %optsur%
          cls
