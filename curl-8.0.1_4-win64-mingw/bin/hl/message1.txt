@@ -1,3 +1,0 @@
-Echo is OFF
-Echo is OFF
-l 
