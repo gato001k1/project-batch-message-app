@@ -49,6 +49,8 @@ if "%optusr%"=="create" (
      cd ..
     echo %optusr%>reciverin.l
     cd ..
+    dir
+    pause
     start reciveftp.bat
     cd users
     cd %optsur%
@@ -59,7 +61,7 @@ if "%optusr%"=="create" (
   )
 :inic
 cls
-echo Enter the name of The custom name :)
+echo Enter The custom name :)
 set /p Customname=
 Echo Enter the IP address or the Host name of the SFTP server:
 set /p ftpServer=
@@ -89,6 +91,9 @@ if exist %Customname% (
   goto send2
   
 :send2
+cls
+dir
+echo insert message
 set /p send=
 echo sended
    echo %DATE% %TIME% %uusername% %send%>>test.txt
