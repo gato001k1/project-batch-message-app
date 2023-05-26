@@ -87,10 +87,13 @@ if exist %Customname% (
 ::messaging system WIP
 :loop
   goto send2
+  
 :send2
 set /p send=
+echo sended
    echo %DATE% %TIME% %uusername% %send%>>test.txt
     curl -u %ftpUsername%:%ftpPassword% -T "test.txt" ftp://%ftpServer%
+    cls
 goto send2
 
 
