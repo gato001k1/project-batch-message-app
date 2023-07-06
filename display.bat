@@ -1,8 +1,10 @@
 @echo off
-
+title DISPLAY
 set /p user=<display.user
-echo %user%
+set /p filename=<display.filename
+echo %user% #%filename%
 del display.user
+del display.filename
 cd users
 cd %user%
 :loop
@@ -14,6 +16,6 @@ goto 2
 
 :2
 cls
-type test.txt
+type %filename%
 del text.refresh
 goto loop
