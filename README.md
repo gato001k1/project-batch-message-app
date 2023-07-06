@@ -1,4 +1,4 @@
-# project-batch-message-app
+# FTP project-batch-message-app
 
 this message app would make a app to send messages to another compueter using the curl and the ftp protocol with an server
 at the moment only works on a windows
