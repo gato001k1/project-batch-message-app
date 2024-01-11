@@ -8,3 +8,5 @@ at the moment only works on a windows
 if it doesent work use the curl website https://curl.se/ and download the .zip file and instert the 
 chatreciever.bat and reciver.bat inside of the bin directory.
 you could use the https://www.infinityfree.net/ Free FTP servers as a test or use it
+# Notifications
+to use the notifications you need to go to settings and in setting enable the notifications function
