@@ -1,12 +1,27 @@
+@echo off
+
+if exist curl.exe (
+goto curlpathsetb
+) else (
+    set curlpath=curl
+    echo is recommended to have the curl provided.
+    pause
+    goto stof
+)
+:curlpathsetb
+set "curlpath=%~dp0curl.exe"
+    echo %curlpath% set
+    goto stof
+
+:stof
 if exist echoon (
     @echo on
 ) else (
 @echo off    
 )
-
 setlocal enabledelayedexpansion
 cls
-title test CHBAT v1.6 TEST
+title test CHBAT v1.7 BETA TEST
 ::requirements
 set /p filename=<=filename.save
 if not exist users (
@@ -35,11 +50,22 @@ if not exist username.u (
 )
 :ftpuserschoose
 cls
-echo select the user or option
-echo Write create to make a new user or settings to enter the settings and write exit to exit:
 ::display the user list          users
 del header.txt 2>nul
+
+echo " ________  ___  ___  ________  ________  _________   
+echo "|\   ____\|\  \|\  \|\   __  \|\   __  \|\___   ___\ 
+echo "\ \  \___|\ \  \\\  \ \  \|\ /\ \  \|\  \|___ \  \_| 
+echo " \ \  \    \ \   __  \ \   __  \ \   __  \   \ \  \  
+echo "  \ \  \____\ \  \ \  \ \  \|\  \ \  \ \  \   \ \  \ 
+echo "   \ \_______\ \__\ \__\ \_______\ \__\ \__\   \ \__\
+echo "    \|_______|\|__|\|__|\|_______|\|__|\|__|    \|__|                                                     
+
+echo ------------------------------------------------------------------------------------------------------------------------
 dir /b
+echo ------------------------------------------------------------------------------------------------------------------------ 
+echo select the user or option
+echo Write create to make a new user or settings to enter the settings and write exit to exit:
 set /p optusr=
 
 if /i "%optusr%"=="exit" (
@@ -106,6 +132,25 @@ rem                optusr
     echo !ftpServer!>server
     echo !ftpPassword!>password
 cls
+:cl
+echo is the server sftp?
+set /p sftpchoose=(Y,N)
+if "%sftpchoose%"=="y" (
+    echo o > sftp
+    set sftpmode="sftp"
+    cls
+    goto confix
+    )
+if "%sftpchoose%"=="n" (
+    set sftpmode="ftp"
+    cls
+    goto confix
+    )
+    echo option not valid
+    pause
+    cls
+    goto cl
+:confix
 echo write the new file name or random
 set /p filename=
 if "%filename%"=="random" (
@@ -122,10 +167,11 @@ echo %filename_save%
 echo %username%
 echo %password%
 echo %server%
-curl -u %username%:%password% -T "%filename%" ftp://%server%
+"%curlpath%" -u %username%:%password% -T "%filename%" %sftpmode%://%server% -k
 echo filename set
 pause
-goto cl
+cls
+goto reciever
 
 :random_file2
 echo %random%%random%.txt>filename.save
@@ -137,18 +183,19 @@ set /p password=<password
 set /p server=<server
 echo %filename_save%
 echo %username%
-echo %password%
 echo %server%
-curl -u %username%:%password% -T "%filename_save%" ftp://%server%
+"%curlpath%" -u %username%:%password% -T "%filename_save%" %sftpmode%://%server% -k
 echo Random filename set: %filename_save%
 pause
+cls
+goto reciever
 
-goto cl
+cls
 rem                           starting reciver
-    :cl
+:reciever
     set /p filename_save=<filename.save
     echo > %filename_save%
-    rem users
+    rexm users
     cd ..
     echo !optusr!>reciverin.l
     echo !filename_save!>reciver_filename.l
@@ -162,10 +209,17 @@ rem                           starting reciver
 
 
 rem messaging system WIP
+rem set /p sftpmode=<sftp
 :loop
 goto send2
 rem                                                optusr
 :send2
+if EXIST sftp (
+ set "sftpmode=sftp"
+) else (
+set "sftpmode=ftp"
+)
+echo !sftpmode!
 rem      display
 set /p filename_save=<filename.save
 cd ..
@@ -176,12 +230,14 @@ start display.bat
 cd users
 cd !optusr!
 :send3
+
 cls
-echo write *reset to reset the reciver and exit to exit
+echo write use * to use options
+echo options: exit, reset (to reset the reciver), upload , download.
 echo Server credentials: usr %ftpUsername% usrn %uusername% pass %ftpPassword% serv %ftpServer% file.save %filename_save% 2>nul
 set /p send=insert message here:
 
-if /i "%send%"=="exit" (
+if /i "%send%"=="*exit" (
   cd ..
     goto ftpuserschoose
 )
@@ -189,10 +245,18 @@ if /i "%send%"=="*reset" (
   cd ..
     goto resetreciver
 )
+if /i "%send%"=="*upload" (
+    goto sendfile
+)
+if /i "%send%"=="*download" (
+        goto download
+)
 echo sended
 echo %DATE% %TIME% %uusername% %send%>>%filename_save%
 echo 0 > text.refresh
-curl -u %ftpUsername%:%ftpPassword% -T "%filename_save%" ftp://%ftpServer%
+echo > nntfdp
+"%curlpath%" -u %ftpUsername%:%ftpPassword% -T "%filename_save%" %sftpmode%://%ftpServer% -k
+
 cls
 goto send3
 
@@ -211,6 +275,8 @@ echo WIP settings
 echo change username "username"
 echo change the name of the message file "filename"
 echo to turn echo on "echo on"
+echo to change the protocol used on a profile "protocol"
+echo to activate or deactivate notifications "notifications"
 echo exit
 set /p settings=
 if "%settings%"=="filename" goto filename
@@ -221,7 +287,8 @@ goto ftpuserschoose
 
 if "%settings%"=="username" goto changeusername
 if "%settings%"=="echo on" goto echo on
-
+if "%settings%"=="protocol" goto protocolchange
+if "%settings%"=="notifications" goto notifcls
 echo That option is not available
 pause
 goto settings
@@ -239,6 +306,12 @@ IF NOT EXIST %user_name% (
         goto filename
 ) else (
 cd %user_name%
+)
+set /p sftpmode=<sftp
+if "%sftpmode%"=="on2" (
+ set sftpmode=sftp
+) else (
+    set sftpmode=ftp
 )
 echo write the new file name or random
 set /p filename=
@@ -262,7 +335,7 @@ echo %filename_save%
 echo %username%
 echo %password%
 echo %server%
-curl -u %username%:%password% -T "%filename%" ftp://%server%
+"%curlpath%" -u %username%:%password% -T "%filename%" %sftpmode%://%server% -k
 echo filename set
 pause
 cd ..
@@ -283,7 +356,7 @@ echo %filename_save%
 echo %username%
 echo %password%
 echo %server%
-curl -u %username%:%password% -T "%filename_save%" ftp://%server%
+"%curlpath%" -u %username%:%password% -T "%filename_save%" %sftpmode%://%server% -k
 echo Random filename set: %filename_save%
 pause
 cd ..
@@ -323,6 +396,104 @@ if /i "%restartr%"=="Y" (
 )
 goto settings
 
+start
+
+:protocolchange
+cls
+cd users
+echo for what server u want to change the protocol
+dir /b
+set /p user_protocol=
+IF NOT EXIST %user_protocol% (
+        echo %user_protocol% does not exist
+        pause
+        cls
+        goto protocolchange
+) else (
+cd %user_protocol%
+)
+:changeprotocol
+cls 
+set /p protocolused=ftp or sftp :
+if "%protocolused%"=="ftp" (
+    del sftp
+    cd ..
+    cd ..
+    cls
+    goto s
+)
+if "%protocolused%"=="sftp" (
+    echo on2 > sftp
+    cd ..
+    cd ..
+    cls
+    goto s
+)
+echo that option is not valid
+pause
+cls
+goto changeprotocol
+
+:notifcls
+cd users
+echo for what server u want to activate or deactivate notifications?
+dir /b
+set /p server_notif=
+IF NOT EXIST %server_notif% (
+        echo %server_notif% does not exist
+        pause
+        cls
+        goto notifcls
+) else (
+cd %server_notif%
+:tude
+set /p notifchange= activate notifications "n,y"
+if "%notifchange%"=="y" (
+echo > notif
+echo done!
+cd ..
+cd ..
+
+goto s
+)
+if "%notifchane%"=="n" (
+    del notif
+    echo done!
+    cd ..
+    cd ..
+    cls
+    goto s
+ )
+echo that user doesent exist
+pause
+cls
+goto tude
+)
+
+
+
+
+
+:sendfile
+set /p send=insert where the file is located or drop the file here:
+for %%F in ("%send%") do set "sendEND=%%~nxF"
+echo sending file
+echo %DATE% %TIME% %uusername% New file uploaded do *download and then put %sendEND% to download the file >> %filename_save%
+
+echo 0 > text.refresh
+echo > nntfdp
+"%curlpath%" -u %ftpUsername%:%ftpPassword% -T "%filename_save%" %sftpmode%://%ftpServer% -k
+"%curlpath%" -u %ftpUsername%:%ftpPassword% -T "%send%" %sftpmode%://%ftpServer% -k
+echo > nntfdp
+echo sended
+pause
+goto send3
+
+:download
+set /p downloadsf=insert the name of the file inculding extension:
+"%curlpath%" --user %ftpUsername%:%ftpPassword% -o %downloadsf% %sftpmode%://%ftpServer%/%downloadsf% -k
+pause
+goto send3
 
 
 :exit
