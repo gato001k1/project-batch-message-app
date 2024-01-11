@@ -7,6 +7,7 @@ del display.user
 del display.filename
 cd users
 cd %user%
+goto 2
 :loop
 if exist text.refresh (
 goto 2
@@ -17,5 +18,9 @@ goto 2
 :2
 cls
 type %filename%
-del text.refresh
+if exist text.refresh (
+    del text.refresh
+) else (
+    goto loop
+)
 goto loop
