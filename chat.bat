@@ -1,5 +1,6 @@
 @echo off
 
+
 if exist curl.exe (
 goto curlpathsetb
 ) else (
@@ -65,21 +66,24 @@ echo ---------------------------------------------------------------------------
 dir /b
 echo ------------------------------------------------------------------------------------------------------------------------ 
 echo select the user or option
-echo Write create to make a new user or settings to enter the settings and write exit to exit:
-set /p optusr=
+echo "create" To add a new server
+echo "settings" To go to settings
+echo "exit" To exit
+echo use "*" To use the functions
+set /p optusr=#:
 
-if /i "%optusr%"=="exit" (
-    goto exit
+if /i "%optusr%"=="*exit" (
+    goto EOF
 )
 
 
-if /i "%optusr%"=="create" (
+if /i "%optusr%"=="*create" (
     cls
     goto inic
 )
 
 
-if /i "%optusr%"=="settings" (
+if /i "%optusr%"=="*settings" (
     cls
     goto settings
 ) 
@@ -106,11 +110,11 @@ goto loop
     )
 
 
-
+2
 :inic
 cls
 echo Enter The custom name:
-set /p optusr=
+set /p optusr=#:
 if exist !optusr! (
     echo that custom name already exists
     pause
@@ -118,11 +122,11 @@ if exist !optusr! (
     goto inic
 )
 Echo Enter the IP address or the Host name of the SFTP server:
-set /p ftpServer=
+set /p ftpServer=#:
 Echo Enter the username to log in to the SFTP server:
-set /p ftpUsername=
+set /p ftpUsername=#:
 Echo Enter the password to log in to the SFTP server:
-set /p ftpPassword=
+set /p ftpPassword=#:
 rem user creator system   users
     echo creating user
     mkdir !optusr!
@@ -134,7 +138,7 @@ rem                optusr
 cls
 :cl
 echo is the server sftp?
-set /p sftpchoose=(Y,N)
+set /p sftpchoose=(Y,N):
 if "%sftpchoose%"=="y" (
     echo o > sftp
     set sftpmode="sftp"
@@ -159,6 +163,7 @@ if "%filename%"=="random" (
 )
 echo %filename%.txt>filename.save
 echo fixing
+
     echo 475872309570475-57-3475-347-57509875027057-57-3475-43543850843590843-58-358-3458-03485-4385-34850238-5843-58-403985-034285-834-58342-958-385-8342-58-34285-843-583-085-384-5823858> %filename_save%
     set /p username=<username
 set /p password=<password
@@ -168,6 +173,8 @@ echo %username%
 echo %password%
 echo %server%
 "%curlpath%" -u %username%:%password% -T "%filename%" %sftpmode%://%server% -k
+echo Checking connection If upload doesent work There is not a connection to the server
+    timeout /t 2 > nul
 echo filename set
 pause
 cls
@@ -185,6 +192,8 @@ echo %filename_save%
 echo %username%
 echo %server%
 "%curlpath%" -u %username%:%password% -T "%filename_save%" %sftpmode%://%server% -k
+echo Checking connection If upload doesent work There is not a connection to the server
+    timeout /t 2 > nul
 echo Random filename set: %filename_save%
 pause
 cls
@@ -271,6 +280,7 @@ cd ..
 :s
 
 rem                                                  main
+echo ------------------------------------------------------------------------------------------------------------------------
 echo WIP settings
 echo change username "username"
 echo change the name of the message file "filename"
@@ -278,7 +288,9 @@ echo to turn echo on "echo on"
 echo to change the protocol used on a profile "protocol"
 echo to activate or deactivate notifications "notifications"
 echo exit
-set /p settings=
+echo ------------------------------------------------------------------------------------------------------------------------
+
+set /p settings=#:
 if "%settings%"=="filename" goto filename
 if "%settings%"=="exit" (
     cd users
@@ -336,6 +348,8 @@ echo %username%
 echo %password%
 echo %server%
 "%curlpath%" -u %username%:%password% -T "%filename%" %sftpmode%://%server% -k
+echo Checking connection If upload doesent work There is not a connection to the server
+    timeout /t 2 > nul
 echo filename set
 pause
 cd ..
@@ -357,6 +371,8 @@ echo %username%
 echo %password%
 echo %server%
 "%curlpath%" -u %username%:%password% -T "%filename_save%" %sftpmode%://%server% -k
+echo Checking connection If upload doesent work There is not a connection to the server
+    timeout /t 2 > nul
 echo Random filename set: %filename_save%
 pause
 cd ..
@@ -392,7 +408,7 @@ if /i "%restartr%"=="Y" (
     echo restarting
     start chat.bat
     timeout /t 2 > nul
-    goto exit
+    goto EOF
 )
 goto settings
 
@@ -496,4 +512,4 @@ pause
 goto send3
 
 
-:exit
+:EOF
