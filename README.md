@@ -1,10 +1,3 @@
- ________  ___  ___  ________  ________  _________   
-|\   ____\|\  \|\  \|\   __  \|\   __  \|\___   ___\ 
-\ \  \___|\ \  \\\  \ \  \|\ /\ \  \|\  \|___ \  \_| 
- \ \  \    \ \   __  \ \   __  \ \   __  \   \ \  \  
-  \ \  \____\ \  \ \  \ \  \|\  \ \  \ \  \   \ \  \ 
-   \ \_______\ \__\ \__\ \_______\ \__\ \__\   \ \__\
-    \|_______|\|__|\|__|\|_______|\|__|\|__|    \|__|  1.7
 
 # FTP and SFTP project-batch-message-app
 
@@ -13,8 +6,6 @@ at the moment only works on a windows
 
 # REMEMBER THAT ALL THE USERS SHOULD HAVE THE SAME FILENAME WHEN PUTTING THE FILENAME DONT PUT THE EXTENSION
 # YOU CAN HAVE DIFFERENT CHATS ON A SAME SERVER WITH DIFFERENT FILENAMES
-if it doesent work use the curl website https://curl.se/ and download the .zip file and instert the 
-chatreciever.bat and reciver.bat inside of the bin directory.
-you could use the https://www.infinityfree.net/ Free FTP servers as a test or use it
+
 # Notifications
 to use the notifications you need to go to settings and in setting enable the notifications function
