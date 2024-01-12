@@ -1,3 +1,11 @@
+ ________  ___  ___  ________  ________  _________   
+|\   ____\|\  \|\  \|\   __  \|\   __  \|\___   ___\ 
+\ \  \___|\ \  \\\  \ \  \|\ /\ \  \|\  \|___ \  \_| 
+ \ \  \    \ \   __  \ \   __  \ \   __  \   \ \  \  
+  \ \  \____\ \  \ \  \ \  \|\  \ \  \ \  \   \ \  \ 
+   \ \_______\ \__\ \__\ \_______\ \__\ \__\   \ \__\
+    \|_______|\|__|\|__|\|_______|\|__|\|__|    \|__|  1.7
+
 # FTP and SFTP project-batch-message-app
 
 this message app would make a app to send messages to another compueter using the curl and the ftp protocol with an server
