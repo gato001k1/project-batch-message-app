@@ -18,6 +18,7 @@ rem to fix a if () bug
 cd users
 
 :o
+
 echo catching the user
 if not exist reciverin.l (
     echo waiting for reciverin.l
@@ -53,6 +54,14 @@ if EXIST sftp (
 )
 
 :loop
+echo Checking if exit
+if exist exit.pp (
+echo Exiting Bye!
+del exit.pp
+    timeout /t 2 > nul
+goto EOF
+
+)
 echo Checking file...
 timeout /t 1 > nul
 "%curlpath%" --user %username%:%password% --head --silent %sftpmode%://%server%/%filename_save% -k > header.txt
@@ -80,6 +89,7 @@ if %local_file_size% equ %server_file_size% (
     if NOT EXIST nntfdp (
         if EXIST notif (
             powershell -Command "[reflection.assembly]::loadwithpartialname('System.Windows.Forms'); [reflection.assembly]::loadwithpartialname('System.Drawing'); $notify = new-object system.windows.forms.notifyicon; $notify.icon = [System.Drawing.SystemIcons]::Information; $notify.visible = $true; $notify.showballoontip(10,'New Message!','You have received New Message from %user%!',[system.windows.forms.tooltipicon]::None)"
+            goto loop
         )
     ) else (
         del nntfdp
@@ -99,6 +109,14 @@ if NOT EXIST sftpchecker (
 )
 
 :sftpchecked
+echo Checking if exit
+if exist exit.pp (
+echo Exiting Bye!
+del exit.pp
+    timeout /t 2 > nul
+goto EOF
+
+)
 if exist %filename_save% (
     for %%A in (%filename_save%) do set local_file_size=%%~zA
 ) else (
@@ -130,6 +148,7 @@ if %local_file_size% equ %server_file_size% (
     if NOT EXIST nntfdp (
         if EXIST notif (
             powershell -Command "[reflection.assembly]::loadwithpartialname('System.Windows.Forms'); [reflection.assembly]::loadwithpartialname('System.Drawing'); $notify = new-object system.windows.forms.notifyicon; $notify.icon = [System.Drawing.SystemIcons]::Information; $notify.visible = $true; $notify.showballoontip(10,'New Message!','You have received New Message from %user%!',[system.windows.forms.tooltipicon]::None)"
+            goto sftpchecked
         )
     ) else (
         del nntfdp
@@ -137,3 +156,7 @@ if %local_file_size% equ %server_file_size% (
     )
 )
 goto sftpchecked
+
+
+:EOF
+exit
