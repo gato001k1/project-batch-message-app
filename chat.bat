@@ -22,7 +22,7 @@ if exist echoon (
 )
 setlocal enabledelayedexpansion
 cls
-title test CHBAT v1.7 BETA TEST
+title test CHBAT v1.7.1
 ::requirements
 set /p filename=<=filename.save
 if not exist users (
@@ -60,7 +60,7 @@ echo "\ \  \___|\ \  \\\  \ \  \|\ /\ \  \|\  \|___ \  \_|
 echo " \ \  \    \ \   __  \ \   __  \ \   __  \   \ \  \  
 echo "  \ \  \____\ \  \ \  \ \  \|\  \ \  \ \  \   \ \  \ 
 echo "   \ \_______\ \__\ \__\ \_______\ \__\ \__\   \ \__\
-echo "    \|_______|\|__|\|__|\|_______|\|__|\|__|    \|__|                                                     
+echo "    \|_______|\|__|\|__|\|_______|\|__|\|__|    \|__|  1.7.1                                              
 
 echo ------------------------------------------------------------------------------------------------------------------------
 dir /b
@@ -93,6 +93,9 @@ if /i "%optusr%"=="*settings" (
         cls
         goto ftpuserschoose
     ) else (
+goto fixelse1
+    )
+:fixelse1
       cd %optusr%
 set /p ftpUsername=<username
 set /p ftpServer=<server
@@ -102,18 +105,21 @@ cd ..
 echo !optusr!>reciverin.l
    echo !filename_save!>reciver_filename.l
 cd ..
-start reciveftp.bat
+
+goto SCKF
+
+
+:SCKF2
 cd users
 cd !optusr!
 cls
 goto loop
-    )
 
 
-2
+
 :inic
 cls
-echo Enter The custom name:
+echo Enter The name of your server:
 set /p optusr=#:
 if exist !optusr! (
     echo that custom name already exists
@@ -121,11 +127,11 @@ if exist !optusr! (
     cls
     goto inic
 )
-Echo Enter the IP address or the Host name of the SFTP server:
+Echo Enter the IP address or the Host name of the SFTP or FTP server:
 set /p ftpServer=#:
-Echo Enter the username to log in to the SFTP server:
+Echo Enter the username to log in to the SFTP or FTP server:
 set /p ftpUsername=#:
-Echo Enter the password to log in to the SFTP server:
+Echo Enter the password to log in to the SFTP or FTP server:
 set /p ftpPassword=#:
 rem user creator system   users
     echo creating user
@@ -178,7 +184,7 @@ echo Checking connection If upload doesent work There is not a connection to the
 echo filename set
 pause
 cls
-goto reciever
+goto setuphide
 
 :random_file2
 echo %random%%random%.txt>filename.save
@@ -197,20 +203,66 @@ echo Checking connection If upload doesent work There is not a connection to the
 echo Random filename set: %filename_save%
 pause
 cls
-goto reciever
+goto setuphide
 
+
+:setuphide
+echo Do you want to hide the Reciver?
+set /p reciverhide= y,n :
+if "%reciverhide%"=="y" (
+goto hidereciver
+)
+ if "%reciverhide%"=="n"(
+    goto nohidereciver
+ )
+echo option no aviable
+pause
+goto setuphide
+
+:hidereciver
+echo f > hidereciver
+echo reciver activated
+pause
+goto con
+
+:nohidereciver
+del hidereciver > nul
+echo reciver deactivated
+pause
+goto con
+
+:con
 cls
 rem                           starting reciver
 :reciever
     set /p filename_save=<filename.save
     echo > %filename_save%
-    rexm users
+    rem x users
     cd ..
     echo !optusr!>reciverin.l
     echo !filename_save!>reciver_filename.l
     cd ..
     rem main
-    start reciveftp.bat
+    cd users
+    cd !optusr!
+    rem optuser
+
+if EXIST hidereciver (
+    cd ..
+    rem users
+    cd ..
+    rem main
+    echo Set WshShell = CreateObject^("WScript.Shell"^) > temp.vbs
+          echo WshShell.Run chr(34^) ^& "reciveftp.bat" ^& Chr(34^), 0 >> temp.vbs
+             echo Set WshShell = Nothing >> temp.vbs
+    cscript //B temp.vbs
+    del temp.vbs
+        ) else (
+            cd ..
+            cd ..
+        start reciveftp.bat
+        )
+
     cd users
     cd !optusr!
     cls
@@ -238,14 +290,19 @@ echo !filename_save! > display.filename
 start display.bat
 cd users
 cd !optusr!
+echo 0 > text.refresh
 :send3
-
 cls
 echo write use * to use options
-echo options: exit, reset (to reset the reciver), upload , download.
-echo Server credentials: usr %ftpUsername% usrn %uusername% pass %ftpPassword% serv %ftpServer% file.save %filename_save% 2>nul
+echo options: exit, reset (to reset the reciver), upload , download, exitre: (to exit reciver when hided or not)
+echo Server credentials: usr: %ftpUsername% usrn: %uusername% pass: %ftpPassword% serv: %ftpServer% file.save: %filename_save% 2>nul
 set /p send=insert message here:
 
+
+if /i "%send%"=="*exitre" (
+
+    goto exitre1
+)
 if /i "%send%"=="*exit" (
   cd ..
     goto ftpuserschoose
@@ -287,6 +344,8 @@ echo change the name of the message file "filename"
 echo to turn echo on "echo on"
 echo to change the protocol used on a profile "protocol"
 echo to activate or deactivate notifications "notifications"
+echo to hide the reciver for a specific user "hide"
+echo to edit a current server added "edit"
 echo exit
 echo ------------------------------------------------------------------------------------------------------------------------
 
@@ -297,8 +356,10 @@ if "%settings%"=="exit" (
 goto ftpuserschoose
 )
 
+if "%settings%"=="edit" goto editserver
+if "%settings%"=="hide" goto setuphideconfig
 if "%settings%"=="username" goto changeusername
-if "%settings%"=="echo on" goto echo on
+if "%settings%"=="echo on" goto echoon
 if "%settings%"=="protocol" goto protocolchange
 if "%settings%"=="notifications" goto notifcls
 echo That option is not available
@@ -382,8 +443,10 @@ goto s
 
 :resetreciver
 cls
-echo please close the reciver
-pause
+cd %optusr%
+echo s > exit.pp
+echo closing reciver
+cd ..
 echo sending reciverin.l
 echo !optusr!>reciverin.l
         echo sending reciver_filename.l
@@ -393,23 +456,47 @@ echo starting reciver
 start reciveftp.bat
 cd users
 cd %optusr%
+echo > exit
 echo completed
     timeout /t 2 > nul
     cls
 goto send3
 
-:echooff
+:echoon
+set /p activateechoon=activate Y/ Deactivate /N #:
+if "%activateechoon%"=="Y" (
 echo > echoon
-echo on has been activated
+echo echo on has been activated
 echo restart the app
-set /p restartr= want to restart the app (Y,N) ?
+set /p restartr= want to restart the app (Y,N)
 
 if /i "%restartr%"=="Y" (
     echo restarting
     start chat.bat
     timeout /t 2 > nul
     goto EOF
+) else (
+    goto settings
 )
+) else if "%activateechoon%"=="N" (
+    echo echo has been deactivated
+    del echoon
+    
+    set /p restartr= want to restart the app (Y,N) ?
+
+if /i "%restartr%"=="Y" (
+    echo restarting
+    start chat.bat
+    timeout /t 2 > nul
+    goto EOF
+) else (
+    goto settings
+)
+
+
+     
+)
+
 goto settings
 
 start
@@ -512,4 +599,125 @@ pause
 goto send3
 
 
+:setuphideconfig
+cd users
+echo for what server u want to hide or unhide the reciver?
+echo ------------------------------------------------------------------------------------------------------------------------
+dir /b
+echo ------------------------------------------------------------------------------------------------------------------------
+set /p hideconfig=
+IF NOT EXIST %hideconfig% (
+        echo %hideconfig% does not exist
+        pause
+        cls
+        goto setuphideconfig
+) else (
+    cd %hideconfig%
+)
+cls
+
+echo Do you want to hide the Reciver?
+set /p reciverhide= y,n :
+if "%reciverhide1%"=="y" (
+
+goto hidereciversetting
+
+) 
+
+if "%reciverhide1%"=="n" (
+
+goto nohidereciversetting
+
+) 
+
+
+:hidereciversetting
+echo f > hidereciver
+echo reciver hided
+pause
+cls
+cd ..
+cd ..
+goto s
+
+:nohidereciversetting
+del hidereciver > nul
+echo reciver unhided
+pause
+cd ..
+cd ..
+cls
+goto s
+
+:SCKF
+cd users
+cd !optusr!
+if EXIST hidereciver (
+    cd ..
+    cd ..
+    echo Set WshShell = CreateObject^("WScript.Shell"^) > temp.vbs
+          echo WshShell.Run chr(34^) ^& "reciveftp.bat" ^& Chr(34^), 0 >> temp.vbs
+             echo Set WshShell = Nothing >> temp.vbs
+    cscript //B temp.vbs
+    del temp.vbs
+    goto SCKF2
+        ) else (
+            cd ..
+            cd ..
+        start reciveftp.bat
+
+        goto SCKF2
+        )
+
+:editserver
+
+cd users
+echo ------------------------------------------------------------------------------------------------------------------------
+dir /b
+echo ------------------------------------------------------------------------------------------------------------------------
+echo for what server u want to change the credentials
+set /p creden=
+IF NOT EXIST %creden% (
+        echo %creden% does not exist
+        pause
+        cls
+        goto editserver
+) else (
+    cd %creden%
+)
+cls
+Echo Enter the IP address or the Host name of the SFTP or FTP server:
+set /p ftpServer1=#:
+Echo Enter the username to log in to the SFTP or FTP server:
+set /p ftpUsername1=#:
+Echo Enter the password to log in to the SFTP or FTP server:
+set /p ftpPassword1=#:
+rem user creator system   users
+    echo changing the credentials
+rem                optusr
+    echo !ftpUsername1!>username
+    echo !ftpServer1!>server
+    echo !ftpPassword1!>password
+cls 
+cd ..
+cd ..
+goto s
+
+
+
+
+
+
+
+
+
+
+
+
+:exitre1
+echo s > exit.pp
+echo exited
+goto send3
+
 :EOF
+exit
